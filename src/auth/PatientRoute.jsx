@@ -3,7 +3,9 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const PatientRoute = () => {
-  const { userInfo } = useSelector((state) => state.userLogin);
+  // const { userInfo } = useSelector((state) => state.userLogin);
+  const { userInfo } = useSelector((state) => state.users);
+
   const location = useLocation();
 
   return userInfo && userInfo.role === 2 ? (

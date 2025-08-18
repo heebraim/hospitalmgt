@@ -1,97 +1,84 @@
-import React, {Fragment} from "react";
-import "../styles.css";
+import React, { Fragment } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Menu from './Menu';
+import '../styles.css';
 
-import Menu from "./Menu";
-import {Link, withRouter} from "react-router-dom";
-import {useSelector} from "react-redux";
-
-
-
-
-// history must match with path which is /signup e.g
-const isActive = (history, path) => {
-    if (history.location.pathname === path) {
-        return { color: "#ff9900" };
-    } else {
-        return { color: "#ffffff" };
-    }
+const isActive = (location, path) => {
+  return location.pathname === path
+    ? { color: '#ff9900' }
+    : { color: '#ffffff' };
 };
 
+const PatientLayout = ({ children }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const users = useSelector((state) => state.users);
+  const userInfo = users ? users.userInfo : null;
 
-const PatientLayout = ({
-                    children,
-                    history
+  console.log('users state in PatientLayout:', users);
 
-                }) => {
+  if (!userInfo) {
+    navigate('/signin');
+    return null;
+  }
 
-    const userLogin = useSelector((state) => state.userLogin)
-    const { userInfo } = userLogin
+  const patLinks = () => (
+    <Fragment>
+      <div className="sb-sidenav-menu-heading">Core</div>
+      <Link className="nav-link" style={isActive(location, '/')} to="/">
+        <div className="sb-nav-link-icon">
+          <i className="fas fa-tachometer-alt" />
+        </div>
+        Dashboard
+      </Link>
+      <Link
+        className="nav-link"
+        style={isActive(location, userInfo._id ? `/profile/${userInfo._id}` : '/profile')}
+        to={userInfo._id ? `/profile/${userInfo._id}` : '/profile'}
+      >
+        <div className="sb-nav-link-icon">
+          <i className="bi bi-person-badge-fill" />
+        </div>
+        Update Profile
+      </Link>
+      {userInfo.isAdmin && (
+        <Link className="nav-link" style={isActive(location, '/list/users')} to="/list/users">
+          <div className="sb-nav-link-icon">
+            <i className="bi bi-people" />
+          </div>
+          List Users
+        </Link>
+      )}
+    </Fragment>
+  );
 
+  const loggedIn = () => (
+    <div className="small">Logged in as: {userInfo.name || 'Guest'}</div>
+  );
 
-    const patLinks = () => {
-        return (
-            <Fragment>
-                <div className="sb-sidenav-menu-heading">Core</div>
-                <Link className="nav-link" style={isActive(history, '/')} to="/">
-                    <div className="sb-nav-link-icon"><i className="fas fa-tachometer-alt"/></div>
-                    Dashboard
-                </Link>
-
-
-                <Link className="nav-link" style={isActive(history, `/profile/${userInfo._id}`)} to={`/profile/${userInfo._id}`}>
-                    <div className="sb-nav-link-icon"><i className="bi bi-person-badge-fill"/></div>
-                    Update Profile
-                </Link>
-
-                <Link className="nav-link" style={isActive(history, '/list/users')} to="/list/users">
-                    <div className="sb-nav-link-icon"><i className="bi bi-people"/></div>
-                    List Users
-                </Link>
-
-
-            </Fragment>
-
-        );
-    };
-
-
-    const loggedIn = () => (
-        <div className="small">Logged in as:</div>
-
-    )
-    return (
-
-        <nav className="sb-nav-fixed">
-
-            <Menu/>
-            <div id="layoutSidenav">
-                <div id="layoutSidenav_nav">
-                    <nav className="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                        <div className="sb-sidenav-menu">
-                            <div className="nav">
-                                {patLinks()}
-                            </div>
-                        </div>
-                        <div className="sb-sidenav-footer">
-                            {loggedIn()}
-                            {userInfo.name}
-                        </div>
-                    </nav>
-                </div>
-                <div id="layoutSidenav_content">
-                    <main>
-                        <div className="container-fluid">
-                            <h1 className="mt-4">Dashboard</h1>
-                            <ol className="breadcrumb mb-4">
-                                <li className="breadcrumb-item active">Dashboard</li>
-                            </ol>
-                            {children}
-                        </div>
-                    </main>
-                </div>
+  return (
+    <nav className="sb-nav-fixed">
+      <Menu />
+      <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+          <nav className="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div className="sb-sidenav-menu">
+              <div className="nav">{patLinks()}</div>
             </div>
-        </nav>
-    )
-}
+            <div className="sb-sidenav-footer">{loggedIn()}</div>
+          </nav>
+        </div>
+        <div id="layoutSidenav_content">
+          <main>
+            <div className="container-fluid px-4">
+              {children}
+            </div>
+          </main>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
-export default withRouter(PatientLayout);
+export default PatientLayout;
