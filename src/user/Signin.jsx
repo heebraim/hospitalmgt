@@ -149,7 +149,7 @@ const Signin = () => {
         if (userInfo) {
             // Role-based redirection logic
             if (userInfo.role === 1) {
-                navigate("/admin/dashboard");
+                navigate("/doctor/dashboard");
             } else if (userInfo.role === 2) {
                 navigate("/Patient/Dashboard");
             } else if (userInfo.role === 3) {

@@ -10,6 +10,7 @@ import PatientRoute from './auth/PatientRoute';
 import DoctorRoute from './auth/DoctorRoute';
 import Profile from './user/Profile';
 import PatientDashboard from './user/PatientDashboard';
+import DoctorDashboard from './user/DoctorDashboard';
 
 
 import ListUsers from './admin/ListUsers';
@@ -138,9 +139,9 @@ const RoutesComponent = () => {
 
         {/* Add DoctorRoute and PatientRoute like this if needed */}
          
-      {/* <Route element={<DoctorRoute />}>
-        <Route path="/doctor-only" element={<DoctorDashboard />} />
-      </Route> */}
+      <Route element={<DoctorRoute />}>
+        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+      </Route>
         
           <Route element={<PatientRoute />}>
             <Route path="/Patient/Dashboard" element={<PatientDashboard />} />
