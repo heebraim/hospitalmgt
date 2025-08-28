@@ -10,20 +10,18 @@ const isActive = (location, path) => {
     : { color: '#ffffff' };
 };
 
-const PatientLayout = ({ children }) => {
+const DocLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const users = useSelector((state) => state.users);
   const userInfo = users ? users.userInfo : null;
-
-  console.log('users state in PatientLayout:', users);
 
   if (!userInfo) {
     navigate('/signin');
     return null;
   }
 
-  const patLinks = () => (
+  const docLinks = () => (
     <Fragment>
       <div className="sb-sidenav-menu-heading">Core</div>
       <Link className="nav-link" style={isActive(location, '/')} to="/">
@@ -32,6 +30,7 @@ const PatientLayout = ({ children }) => {
         </div>
         Dashboard
       </Link>
+
       <Link
         className="nav-link"
         style={isActive(location, userInfo._id ? `/profile/${userInfo._id}` : '/profile')}
@@ -42,19 +41,27 @@ const PatientLayout = ({ children }) => {
         </div>
         Update Profile
       </Link>
-      {userInfo.isAdmin && (
-        <Link className="nav-link" style={isActive(location, '/list/users')} to="/list/users">
-          <div className="sb-nav-link-icon">
-            <i className="bi bi-people" />
-          </div>
-          List Users
-        </Link>
-      )}
+
+      {/* Example: doctor-specific link */}
+      <Link className="nav-link" style={isActive(location, '/patients')} to="/patients">
+        <div className="sb-nav-link-icon">
+          <i className="bi bi-journal-medical" />
+        </div>
+        My Patients
+      </Link>
+
+      {/* Example: doctor can view appointments */}
+      <Link className="nav-link" style={isActive(location, '/appointments')} to="/appointments">
+        <div className="sb-nav-link-icon">
+          <i className="bi bi-calendar2-check" />
+        </div>
+        Appointments
+      </Link>
     </Fragment>
   );
 
   const loggedIn = () => (
-    <div className="small">Logged in as: {userInfo.name || 'Guest'}</div>
+    <div className="small">Logged in as: {userInfo.name || 'Doctor'}</div>
   );
 
   return (
@@ -64,7 +71,7 @@ const PatientLayout = ({ children }) => {
         <div id="layoutSidenav_nav">
           <nav className="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div className="sb-sidenav-menu">
-              <div className="nav">{patLinks()}</div>
+              <div className="nav">{docLinks()}</div>
             </div>
             <div className="sb-sidenav-footer">{loggedIn()}</div>
           </nav>
@@ -81,4 +88,4 @@ const PatientLayout = ({ children }) => {
   );
 };
 
-export default PatientLayout;
+export default DocLayout;
